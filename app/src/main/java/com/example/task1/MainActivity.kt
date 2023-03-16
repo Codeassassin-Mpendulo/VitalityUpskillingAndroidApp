@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     dataReceivedUITransition()
                     cocktails = res.Cocktails
                     binding.cocktailRecyclerview.setHasFixedSize(true)
-                    cocktailAdapter = CocktailAdapter(cocktails)
+                    cocktailAdapter = CocktailAdapter(cocktails,this)
                     binding.cocktailRecyclerview.adapter = cocktailAdapter
                     binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
                 },

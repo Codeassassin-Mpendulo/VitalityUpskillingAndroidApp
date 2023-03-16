@@ -11,7 +11,9 @@ import com.example.task1.databinding.EachCocktailBinding
 import com.example.task1.network.Cocktail
 import com.squareup.picasso.Picasso
 
-class CocktailAdapter(private val cocktailList: List<Cocktail>): RecyclerView.Adapter<CocktailAdapter.ViewHolderClass>() {
+class CocktailAdapter(private val cocktailList: List<Cocktail>,private val context:Context): RecyclerView.Adapter<CocktailAdapter.ViewHolderClass>() {
+
+
     inner class ViewHolderClass(val itemBinding: EachCocktailBinding): RecyclerView.ViewHolder(itemBinding.root) {
     }
 
@@ -32,7 +34,7 @@ class CocktailAdapter(private val cocktailList: List<Cocktail>): RecyclerView.Ad
         holder.itemBinding.drinkName.text = cocktailName
 
         holder.itemBinding.viewHolder.setOnClickListener{
-//            Toast.makeText(context,cocktailInstruction,Toast.LENGTH_LONG).show()
+            Toast.makeText(context,cocktailInstruction,Toast.LENGTH_LONG).show()
         }
     }
 
