@@ -2,11 +2,9 @@ package com.example.task1.utils
 
 import android.content.Context
 import android.view.LayoutInflater
-
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.task1.MainActivity
 import com.example.task1.databinding.EachCocktailBinding
 import com.example.task1.network.Cocktail
 import com.squareup.picasso.Picasso
@@ -25,7 +23,7 @@ class CocktailAdapter(private val cocktailList: List<Cocktail>,private val conte
 
         var data = cocktailList[position]
         val imageURL = data.img
-        val id = data.id
+//        val id = data.id
         val cocktailName = data.drinkName
         val cocktailInstruction = data.drinkInstruction
 
