@@ -19,6 +19,16 @@ class LoadingReducer : Reducer<LoadingViewState,LoadingAction>{
             is LoadingAction.LoadingFailure ->{
                 stateMappedToLoadingFailureAction(currentState, action)
             }
+            is LoadingAction.LoadFilteredList ->{
+                currentState.copy(
+                    data = action.filteredList
+                )
+            }
+            is LoadingAction.RefreshApp ->{
+                currentState.copy(
+                    isAppBeingRefreshed = !currentState.isAppBeingRefreshed!!
+                )
+            }
         }
     }
 

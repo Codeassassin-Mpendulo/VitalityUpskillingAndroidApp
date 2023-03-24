@@ -10,5 +10,6 @@ data class LoadingViewState(
     val showHeading : Boolean = true,
     val showProgressCircle: Boolean = true,
     val data: CocktailList? = null,
-    val error: Throwable? = null
+    val error: Throwable? = null,
+    val isAppBeingRefreshed: Boolean? = false
 ):State

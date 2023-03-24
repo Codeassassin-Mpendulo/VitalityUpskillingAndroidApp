@@ -15,4 +15,6 @@ sealed class LoadingAction: Action {
     object LoadingStarted : LoadingAction()
     data class LoadingSuccess(val newData: CocktailList?) : LoadingAction()
     data class LoadingFailure(val error: Throwable?) : LoadingAction()
+    data class LoadFilteredList(val filteredList:CocktailList?):LoadingAction()
+    object RefreshApp :LoadingAction()
 }
