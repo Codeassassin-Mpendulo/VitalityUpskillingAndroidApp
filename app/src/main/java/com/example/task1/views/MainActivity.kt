@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun loadingData(){
-        binding.getData.visibility = View.VISIBLE
+        binding.getData.visibility = View.VISIBLe
         binding.progressBar.visibility = View.VISIBLE
     }
 
