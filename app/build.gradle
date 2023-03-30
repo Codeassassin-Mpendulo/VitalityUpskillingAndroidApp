@@ -7,7 +7,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.task1"
+        applicationId "com.example.cocktaildictionary"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -15,7 +15,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildFeatures{
         viewBinding true
     }
