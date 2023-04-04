@@ -9,7 +9,6 @@ object RetrofitClientInstance {
     private var retrofit: Retrofit? = null
     private const val BASE_URL = "https://the-cocktail-db.p.rapidapi.com/"
 
-
     val retrofitInstance: Retrofit?
         get() {
             if (retrofit == null) {

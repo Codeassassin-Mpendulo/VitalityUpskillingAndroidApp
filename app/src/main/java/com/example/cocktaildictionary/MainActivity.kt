@@ -13,7 +13,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
     private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,8 +24,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getPopularCocktails() {
-        val service =
-            RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
+        val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
 
         myCompositeDisposable.add(service!!.getCocktails()
             .observeOn(AndroidSchedulers.mainThread())
@@ -46,8 +44,5 @@ class MainActivity : AppCompatActivity() {
                 }
             )
         )
-
     }
-
-
 }
