@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.task1">
+    package="com.example.cocktaildictionary">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Task1"
         tools:targetApi="31">
         <activity
-            android:name=".views.MainActivity"
+            android:name="com.example.cocktaildictionary.views.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
