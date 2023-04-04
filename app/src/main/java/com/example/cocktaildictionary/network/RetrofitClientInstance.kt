@@ -1,4 +1,4 @@
-package com.example.task1.network
+package com.example.cocktaildictionary.network
 
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory

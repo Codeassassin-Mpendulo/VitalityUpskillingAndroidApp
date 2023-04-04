@@ -4,12 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.cocktaildictionary.databinding.ActivityMainBinding
-import com.example.task1.network.CocktailApiServices
-import com.example.task1.network.RetrofitClientInstance
+import com.example.cocktaildictionary.network.CocktailApiServices
+import com.example.cocktaildictionary.network.RetrofitClientInstance
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-
 
 class MainActivity : AppCompatActivity() {
 
