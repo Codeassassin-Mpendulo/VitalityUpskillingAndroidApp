@@ -10,6 +10,7 @@ import com.example.cocktaildictionary.databinding.EachCocktailBinding
 import com.example.task1.network.Cocktail
 import com.squareup.picasso.Picasso
 
+
 class CocktailAdapter(private val cocktailList: List<Cocktail>,private val context:Context): RecyclerView.Adapter<CocktailAdapter.ViewHolderClass>() {
     inner class ViewHolderClass(val itemBinding: EachCocktailBinding): RecyclerView.ViewHolder(itemBinding.root) {
     }
@@ -22,7 +23,6 @@ class CocktailAdapter(private val cocktailList: List<Cocktail>,private val conte
 
         var data = cocktailList[position]
         val imageURL = data.img
-        val id = data.id
         val cocktailName = data.drinkName
         val cocktailInstruction = data.drinkInstruction
 
