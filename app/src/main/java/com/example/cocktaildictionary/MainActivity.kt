@@ -53,11 +53,9 @@ class MainActivity : AppCompatActivity() {
                         retryUITransition()
                         getPopularCocktails()
                     }
-
                 }
             )
         )
-
     }
 
     private fun dataReceivedUITransition(){
@@ -65,7 +63,6 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.INVISIBLE
         binding.cocktailRecyclerview.visibility = View.VISIBLE
-
     }
 
     private fun dataNotReceivedUITransition(){
@@ -81,6 +78,4 @@ class MainActivity : AppCompatActivity() {
         binding.getData.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }
-
-
 }
