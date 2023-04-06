@@ -17,21 +17,15 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var cocktails: List<Cocktail>
     private lateinit var cocktailAdapter: CocktailAdapter
-
-
     private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         getPopularCocktails()
-
     }
-
 
     private fun getPopularCocktails() {
         val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
@@ -41,11 +35,9 @@ class MainActivity : AppCompatActivity() {
             .subscribeOn(Schedulers.io())
             .subscribe(
                 { res ->
-
                     dataReceivedUITransition()
-                    cocktails = res.Cocktails
                     binding.cocktailRecyclerview.setHasFixedSize(true)
-                    cocktailAdapter = CocktailAdapter(cocktails, this)
+                    cocktailAdapter = CocktailAdapter(res.Cocktails, this)
                     binding.cocktailRecyclerview.adapter = cocktailAdapter
                     binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
                 },
@@ -56,11 +48,9 @@ class MainActivity : AppCompatActivity() {
                         retryUITransition()
                         getPopularCocktails()
                     }
-
                 }
             )
         )
-
     }
 
     private fun dataReceivedUITransition(){
@@ -68,7 +58,6 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.INVISIBLE
         binding.cocktailRecyclerview.visibility = View.VISIBLE
-
     }
 
     private fun dataNotReceivedUITransition(){
@@ -84,6 +73,4 @@ class MainActivity : AppCompatActivity() {
         binding.getData.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }
-
-
 }
