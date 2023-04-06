@@ -26,10 +26,10 @@ class MainActivity : AppCompatActivity() {
     private fun getPopularCocktails() {
         val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
 
-        myCompositeDisposable.add(service?.getCocktails()
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribeOn(Schedulers.io())
-            ?.subscribe(
+        myCompositeDisposable.add(service!!.getCocktails()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .subscribe(
                 { res ->
                     binding.getData.visibility = View.INVISIBLE
                     binding.progressBar.visibility = View.INVISIBLE
