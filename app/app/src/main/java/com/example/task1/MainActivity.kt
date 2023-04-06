@@ -1,39 +1,41 @@
-package com.example.cocktaildictionary
+package com.example.task1
 
-import androidx.appcompat.app.AppCompatActivity
+
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.cocktaildictionary.databinding.ActivityMainBinding
-import com.example.cocktaildictionary.network.Cocktail
-import com.example.cocktaildictionary.network.CocktailApiServices
-import com.example.cocktaildictionary.network.CocktailList
-import com.example.cocktaildictionary.network.RetrofitClientInstance
-import com.example.cocktaildictionary.utils.CocktailAdapter
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
+import com.example.task1.databinding.ActivityMainBinding
+import com.example.task1.network.*
+import com.example.task1.utils.CocktailAdapter
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var cocktails: List<Cocktail>
     private lateinit var cocktailAdapter: CocktailAdapter
+
+
     private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         getPopularCocktails()
+
     }
 
 
     private fun getPopularCocktails() {
         val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
 
-        myCompositeDisposable.add((service?.getCocktails()?: Observable.just(CocktailList(emptyList<Cocktail>())))
+        myCompositeDisposable.add(service!!.getCocktails()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(
@@ -42,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                     dataReceivedUITransition()
                     cocktails = res.Cocktails
                     binding.cocktailRecyclerview.setHasFixedSize(true)
-                    cocktailAdapter = CocktailAdapter(cocktails, this)
+                    cocktailAdapter = CocktailAdapter(cocktails,this)
                     binding.cocktailRecyclerview.adapter = cocktailAdapter
                     binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
                 },
@@ -84,3 +86,7 @@ class MainActivity : AppCompatActivity() {
 
 
 }
+
+
+
+
