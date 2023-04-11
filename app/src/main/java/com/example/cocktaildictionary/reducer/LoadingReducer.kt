@@ -4,10 +4,8 @@ package com.example.cocktaildictionary.reducer
 import com.example.cocktaildictionary.actions.LoadingAction
 import com.example.cocktaildictionary.state.LoadingViewState
 
-
 class LoadingReducer : Reducer<LoadingViewState,LoadingAction>{
     override fun reduce(currentState: LoadingViewState, action: LoadingAction): LoadingViewState {
-
         return when(action){
             is LoadingAction.LoadingStarted -> {
                 stateMappedToLoadingStartedAction(currentState)

@@ -18,20 +18,12 @@ import com.example.cocktaildictionary.state.LoadingViewState
 import com.example.cocktaildictionary.utils.CocktailAdapter
 import com.example.cocktaildictionary.viewmodel.LoadingViewModel
 
-
 class MainActivity : AppCompatActivity() {
 
-
     private lateinit var binding: ActivityMainBinding
-
     private lateinit var cocktailAdapter: CocktailAdapter
     private lateinit var viewModel:LoadingViewModel
     private var menuItem: MenuItem? = null
-    private var globalMenu:Menu? = null
-
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,26 +38,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater : MenuInflater = menuInflater
         inflater.inflate(R.menu.menu,menu)
-
-
-        menuItem = menu!!.findItem(R.id.search)
-
-        globalMenu = menu
-
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refreshApp(binding.swipeRefreshLayout, menu)
-        }
+        menuItem = menu?.findItem(R.id.search)
+        val searchView: SearchView = menuItem?.actionView as (SearchView)
+        searchView.queryHint = "Type here to search"
 
         if(viewModel.isCocktailListNull()){
             this.invalidateOptionsMenu()
             menuItem?.isVisible = false
         }
-        val searchView: SearchView = menuItem?.actionView as (SearchView)
-        searchView.queryHint = "Type here to search"
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(newText: String?): Boolean {
@@ -77,13 +60,9 @@ class MainActivity : AppCompatActivity() {
                 viewModel.loadFilteredData(newText)
                 return true
             }
-
         })
-
         return super.onCreateOptionsMenu(menu)
     }
-
-
 
     private fun processViewState(viewState: LoadingViewState){
         if (viewState.showHeading && viewState.showProgressCircle&&viewState.data==null){
@@ -134,19 +113,9 @@ class MainActivity : AppCompatActivity() {
     private fun retryUITransition(){
         binding.Id.isVisible = false
         binding.retry.isVisible = false
-
     }
     private fun loadingData(){
         binding.getData.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }
-
-
-
-
-
 }
-
-
-
-

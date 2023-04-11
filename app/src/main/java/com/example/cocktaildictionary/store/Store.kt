@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 * outputting the the update state
  */
 
-
 class Store<S:State,A:Action>(
     initialState: S,
     private val reducer: Reducer<S, A>
@@ -27,5 +26,4 @@ class Store<S:State,A:Action>(
         val newState = reducer.reduce(currentState,action)
         _state.value = newState
     }
-
 }

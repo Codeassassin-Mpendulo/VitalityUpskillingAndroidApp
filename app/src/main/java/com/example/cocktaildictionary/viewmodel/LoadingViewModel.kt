@@ -2,14 +2,8 @@ package com.example.cocktaildictionary.viewmodel
 
 import android.app.Application
 import android.content.ContentValues.TAG
-import android.os.CountDownTimer
-import android.text.format.DateUtils
 import android.util.Log
-import android.view.Menu
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.cocktaildictionary.actions.LoadingAction
 import com.example.cocktaildictionary.cache.Cache
 import com.example.cocktaildictionary.cache.CacheDatabase
@@ -41,49 +35,14 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
 
 
    private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
-   private val timer : CountDownTimer
    private var cacheDatabase: CacheDatabase
    private val converter:Converters = Converters()
    private var cocktailList: CocktailList? = null
-   private var hasTimerStarted: Boolean = false
-   private val _time = MutableLiveData<Long>()
-   private val _hasTimerStopped = MutableLiveData<Boolean>()
-   private val hasTimerStopped : LiveData<Boolean>
-      get() = _hasTimerStopped
+
 
 
    init {
-      timer = object : CountDownTimer(COUNTDOWN_TIME, ONE_SECOND){
-         override fun onTick(millisUntilFinished: Long) {
-
-            _time.value = (millisUntilFinished/ ONE_SECOND)
-            _hasTimerStopped.value = false
-            hasTimerStarted = true
-            Log.d("Time:", DateUtils.formatElapsedTime(_time.value!!))
-
-         }
-
-         override fun onFinish() {
-            _time.value = DONE
-            _hasTimerStopped.value = true
-            hasTimerStarted = false
-            this.cancel()
-         }
-      }
-
-
-
-
       cacheDatabase = CacheDatabase.getDatabase(application)
-
-      this.hasTimerStopped.observeForever { hasFinished ->
-         if (hasFinished) {
-            GlobalScope.launch(Dispatchers.IO) {
-               cacheDatabase.cacheDao().deleteAll()
-            }
-         }
-      }
-
    }
 
    fun isCocktailListNull():Boolean{
@@ -127,13 +86,6 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
       store.dispatch(action)
    }
 
-   private fun appRefresh(){
-      val action = LoadingAction.RefreshApp
-      store.dispatch(action)
-   }
-
-
-
    fun loadFilteredData(query: String?){
       var tempCocktailList = mutableListOf<Cocktail>()
       val action : LoadingAction = if (query != null) {
@@ -149,30 +101,20 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
       store.dispatch(action)
    }
 
-
    fun getPopularCocktails() {
       startLoading()
       GlobalScope.launch(Dispatchers.IO) {
          if (cacheDatabase.cacheDao().mostRecentData().isNotEmpty()){
             //if Cache entity is not null, get the List of cocktails from an instance of the Cache Entity
-
-            if(!hasTimerStarted){
-               timer.start()
-            }
-
-
             val mostRecentData = converter.fromString(cacheDatabase.cacheDao().mostRecentData()[0].latestData)
 
             if(mostRecentData != null){
                //if the List of cocktails is not null, then convert it into a CockTailList and pass it to the successfulLoad method
-
                val cocktailList = CocktailList(mostRecentData)
                successfulLoad(cocktailList)
                return@launch
             }
-
          }
-
       }
 
       val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
@@ -190,16 +132,5 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
             }
          )
       )
-
    }
-
-   fun refreshApp(swipeRefreshLayout: SwipeRefreshLayout, menu: Menu) {
-      appRefresh()
-      this.getPopularCocktails()
-      menu.close()
-      swipeRefreshLayout.isRefreshing = false
-      appRefresh()
-   }
-
-
 }

@@ -18,8 +18,4 @@ interface CacheDao {
 
     @Query("DELETE FROM Cache")
     suspend fun deleteAll()
-
-
-
-
 }
