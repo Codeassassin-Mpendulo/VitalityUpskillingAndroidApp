@@ -1,7 +1,6 @@
-package com.example.task1.network
+package com.example.cocktaildictionary.network
 
 import com.google.gson.annotations.SerializedName
-
 
 data class Cocktail(
     @SerializedName("idDrink") val id: String,

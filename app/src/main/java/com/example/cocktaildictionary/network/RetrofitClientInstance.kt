@@ -1,4 +1,4 @@
-package com.example.task1.network
+package com.example.cocktaildictionary.network
 
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
@@ -8,7 +8,6 @@ object RetrofitClientInstance {
 
     private var retrofit: Retrofit? = null
     private const val BASE_URL = "https://the-cocktail-db.p.rapidapi.com/"
-
 
     val retrofitInstance: Retrofit?
         get() {

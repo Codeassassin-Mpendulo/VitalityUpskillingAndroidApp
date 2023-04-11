@@ -8,10 +8,12 @@ import com.example.cocktaildictionary.databinding.ActivityMainBinding
 import com.example.task1.network.CocktailApiServices
 import com.example.task1.network.RetrofitClientInstance
 import com.example.cocktaildictionary.utils.CocktailAdapter
+import com.example.task1.network.Cocktail
+import com.example.task1.network.CocktailList
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private fun getPopularCocktails() {
         val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
 
-        myCompositeDisposable.add(service!!.getCocktails()
+        myCompositeDisposable.add((service?.getCocktails()?: Observable.just(CocktailList(emptyList<Cocktail>())))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .subscribe(
