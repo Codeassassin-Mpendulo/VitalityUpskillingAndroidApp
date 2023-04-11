@@ -8,11 +8,11 @@
 
     <ImageView
         android:id="@+id/drink_img"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
+        android:layout_width="@dimen/cocktail_item_image_view_layout_height"
+        android:layout_height="@dimen/cocktail_item_image_view_layout_width"
+        android:layout_marginStart="@dimen/cocktail_item_image_view_layout_margin_start"
+        android:layout_marginTop="@dimen/cocktail_item_image_view_layout_margin_top"
+        android:layout_marginBottom="@dimen/cocktail_item_image_view_layout_margin_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,9 +22,9 @@
         android:id="@+id/drink_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="@dimen/cocktail_item_text_view_layout_margin_start"
         android:text="TextView"
-        android:textSize="30sp"
+        android:textSize="@dimen/cocktail_item_text_view_text_size"
         app:layout_constraintBottom_toBottomOf="@+id/drink_img"
         app:layout_constraintStart_toEndOf="@+id/drink_img"
         app:layout_constraintTop_toTopOf="@+id/drink_img" />
