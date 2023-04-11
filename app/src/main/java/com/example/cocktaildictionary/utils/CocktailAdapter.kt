@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cocktaildictionary.R
 import com.example.cocktaildictionary.databinding.CocktailItemBinding
-import com.example.task1.network.Cocktail
+import com.example.cocktaildictionary.network.Cocktail
 import com.squareup.picasso.Picasso
 
 
