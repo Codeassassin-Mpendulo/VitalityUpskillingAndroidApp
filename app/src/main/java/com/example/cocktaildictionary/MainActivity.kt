@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cocktaildictionary.databinding.ActivityMainBinding
-import com.example.task1.network.Cocktail
 import com.example.task1.network.CocktailApiServices
 import com.example.task1.network.RetrofitClientInstance
 import com.example.cocktaildictionary.utils.CocktailAdapter
