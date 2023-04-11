@@ -55,7 +55,10 @@ dependencies {
 
     //RxKotlin
     implementation 'io.reactivex.rxjava3:rxkotlin:3.0.1'
-    
+
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     //Testing Libraries
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
