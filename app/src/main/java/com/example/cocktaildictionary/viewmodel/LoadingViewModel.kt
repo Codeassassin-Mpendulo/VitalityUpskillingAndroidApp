@@ -12,7 +12,7 @@ import com.example.cocktaildictionary.network.CocktailApiServices
 import com.example.cocktaildictionary.network.CocktailList
 import com.example.cocktaildictionary.network.RetrofitClientInstance
 import com.example.cocktaildictionary.reducer.LoadingReducer
-import com.example.cocktaildictionary.state.LoadingViewState
+import com.example.cocktaildictionary.state.HomeActivityViewState
 import com.example.cocktaildictionary.store.Store
 import com.example.cocktaildictionary.utils.Converters
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -31,10 +31,10 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
    private val converter:Converters = Converters()
    private var cocktailList: CocktailList? = null
    private val store = Store(
-      initialState = LoadingViewState(),
+      initialState = HomeActivityViewState(),
       reducer = LoadingReducer()
    )
-   val viewState: StateFlow<LoadingViewState> = store.state
+   val viewState: StateFlow<HomeActivityViewState> = store.state
 
    init {
       cacheDatabase = CacheDatabase.getDatabase(application)

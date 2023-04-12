@@ -2,16 +2,15 @@ package com.example.cocktaildictionary.reducer
 
 
 import com.example.cocktaildictionary.actions.LoadingAction
-import com.example.cocktaildictionary.state.LoadingViewState
+import com.example.cocktaildictionary.state.HomeActivityViewState
 
-class LoadingReducer : Reducer<LoadingViewState,LoadingAction>{
-    override fun reduce(currentState: LoadingViewState, action: LoadingAction): LoadingViewState {
+class LoadingReducer : Reducer<HomeActivityViewState,LoadingAction>{
+    override fun reduce(currentState: HomeActivityViewState, action: LoadingAction): HomeActivityViewState {
         return when(action){
             is LoadingAction.LoadingStarted -> {
                 stateMappedToLoadingStartedAction(currentState)
             }
             is LoadingAction.LoadingSuccess ->{
-
                 stateMappedToLoadingSuccessAction(currentState, action)
             }
             is LoadingAction.LoadingFailure ->{
@@ -31,27 +30,34 @@ class LoadingReducer : Reducer<LoadingViewState,LoadingAction>{
     }
 
     private fun stateMappedToLoadingFailureAction(
-        currentState: LoadingViewState,
+        currentState: HomeActivityViewState,
         action: LoadingAction.LoadingFailure
     ) = currentState.copy(
         showHeading = false,
         showProgressCircle = false,
-        error = action.error
+        error = action.error,
+        data = null,
+        isAppBeingRefreshed = false
     )
 
     private fun stateMappedToLoadingSuccessAction(
-        currentState: LoadingViewState,
+        currentState: HomeActivityViewState,
         action: LoadingAction.LoadingSuccess
     ) = currentState.copy(
         showHeading = false,
         showProgressCircle = false,
-        data = action.newData
+        data = action.newData,
+        error = null,
+        isAppBeingRefreshed = false
     )
 
 
-    private fun stateMappedToLoadingStartedAction(currentState: LoadingViewState) =
+    private fun stateMappedToLoadingStartedAction(currentState: HomeActivityViewState) =
         currentState.copy(
             showHeading = true,
             showProgressCircle = true,
+            data = null,
+            error = null,
+            isAppBeingRefreshed = false
         )
 }
