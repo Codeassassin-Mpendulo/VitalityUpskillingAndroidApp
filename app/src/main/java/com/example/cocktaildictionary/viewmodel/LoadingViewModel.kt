@@ -24,22 +24,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-
 class LoadingViewModel(application: Application): AndroidViewModel(application) {
-
-   companion object{
-      private const val DONE = 0L
-      private const val ONE_SECOND = 1000L
-      private const val COUNTDOWN_TIME = 60000L
-   }
-
 
    private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
    private var cacheDatabase: CacheDatabase
    private val converter:Converters = Converters()
    private var cocktailList: CocktailList? = null
-
-
+   private val store = Store(
+      initialState = LoadingViewState(),
+      reducer = LoadingReducer()
+   )
+   val viewState: StateFlow<LoadingViewState> = store.state
 
    init {
       cacheDatabase = CacheDatabase.getDatabase(application)
@@ -52,8 +47,6 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
       return true
    }
 
-
-
    private fun insertIntoCache(time: String, cocktailList: CocktailList) {
       val cache = Cache(null,time,converter.fromCocktailList(cocktailList.Cocktails))
       GlobalScope.launch(Dispatchers.IO) {
@@ -61,15 +54,6 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
       }
       Log.d(TAG,"Successfully added to cache")
    }
-
-
-
-   private val store = Store(
-      initialState = LoadingViewState(),
-      reducer = LoadingReducer()
-   )
-
-   val viewState: StateFlow<LoadingViewState> = store.state
 
    private fun startLoading(){
       val action = LoadingAction.LoadingStarted
