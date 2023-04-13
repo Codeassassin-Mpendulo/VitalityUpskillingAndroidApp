@@ -4,15 +4,15 @@ import android.app.Application
 import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.example.cocktaildictionary.actions.LoadingAction
+import com.example.cocktaildictionary.actions.HomeActivityAction
 import com.example.cocktaildictionary.cache.Cache
 import com.example.cocktaildictionary.cache.CacheDatabase
 import com.example.cocktaildictionary.network.Cocktail
 import com.example.cocktaildictionary.network.CocktailApiServices
 import com.example.cocktaildictionary.network.CocktailList
 import com.example.cocktaildictionary.network.RetrofitClientInstance
-import com.example.cocktaildictionary.reducer.LoadingReducer
-import com.example.cocktaildictionary.state.HomeActivityViewState
+import com.example.cocktaildictionary.reducer.HomeActivityReducer
+import com.example.cocktaildictionary.state.HomeActivityStates
 import com.example.cocktaildictionary.store.Store
 import com.example.cocktaildictionary.utils.Converters
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -24,17 +24,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class LoadingViewModel(application: Application): AndroidViewModel(application) {
+class HomeActivityViewModel(application: Application): AndroidViewModel(application) {
 
    private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
    private var cacheDatabase: CacheDatabase
    private val converter:Converters = Converters()
-   private var cocktailList: CocktailList? = null
+   var error: Throwable? = null
+   var cocktailList: CocktailList? = null
+
    private val store = Store(
-      initialState = HomeActivityViewState(),
-      reducer = LoadingReducer()
+      initialState = HomeActivityStates.Loading,
+      reducer = HomeActivityReducer()
    )
-   val viewState: StateFlow<HomeActivityViewState> = store.state
+   val viewState: StateFlow<HomeActivityStates> = store.state
 
    init {
       cacheDatabase = CacheDatabase.getDatabase(application)
@@ -56,31 +58,33 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
    }
 
    private fun startLoading(){
-      val action = LoadingAction.LoadingStarted
+      val action = HomeActivityAction.LoadingStarted
       store.dispatch(action)
    }
 
    private fun successfulLoad(cocktailList: CocktailList){
-      val action = LoadingAction.LoadingSuccess(cocktailList)
+      val action = HomeActivityAction.LoadingSuccess(cocktailList)
+      this.cocktailList = cocktailList
       store.dispatch(action)
    }
 
    private fun failedLoad(error:Throwable?){
-      val action = LoadingAction.LoadingFailure(error)
+      val action = HomeActivityAction.LoadingFailure(error)
+      this.error = error
       store.dispatch(action)
    }
 
    fun loadFilteredData(query: String?){
       var tempCocktailList = mutableListOf<Cocktail>()
-      val action : LoadingAction = if (query != null) {
+      val action : HomeActivityAction = if (query != null) {
          for (cocktail in cocktailList!!.Cocktails) {
               if (cocktail.drinkName.contains(query) || cocktail.drinkInstruction.contains(query)){
                  tempCocktailList.add(cocktail)
               }
          }
-         LoadingAction.LoadFilteredList(CocktailList(tempCocktailList))
+         HomeActivityAction.LoadFilteredList(CocktailList(tempCocktailList))
       } else{
-         LoadingAction.LoadFilteredList(cocktailList)
+         HomeActivityAction.LoadFilteredList(cocktailList)
       }
       store.dispatch(action)
    }
@@ -96,25 +100,28 @@ class LoadingViewModel(application: Application): AndroidViewModel(application) 
                //if the List of cocktails is not null, then convert it into a CockTailList and pass it to the successfulLoad method
                val cocktailList = CocktailList(mostRecentData)
                successfulLoad(cocktailList)
-               return@launch
             }
+            return@launch
+         }
+         else{
+            val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
+            myCompositeDisposable.add(service!!.getCocktails()
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribeOn(Schedulers.io())
+               .subscribe(
+                  { res ->
+                     successfulLoad(res)
+                     insertIntoCache(LocalDateTime.now().toString(),res)
+                     return@subscribe
+                  },
+                  { throwable ->
+                     failedLoad(throwable)
+                     return@subscribe
+                  }
+               )
+            )
          }
       }
-
-      val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
-      myCompositeDisposable.add(service!!.getCocktails()
-         .observeOn(AndroidSchedulers.mainThread())
-         .subscribeOn(Schedulers.io())
-         .subscribe(
-            { res ->
-               successfulLoad(res)
-               insertIntoCache(LocalDateTime.now().toString(),res)
-               this.cocktailList = res
-            },
-            { throwable ->
-               failedLoad(throwable)
-            }
-         )
-      )
+      return
    }
 }

@@ -9,23 +9,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cocktaildictionary.databinding.ActivityMainBinding
+import com.example.cocktaildictionary.network.CocktailList
 import com.example.cocktaildictionary.state.HomeActivityStates
-import com.example.cocktaildictionary.state.HomeActivityViewState
 import com.example.cocktaildictionary.utils.CocktailAdapter
-import com.example.cocktaildictionary.viewmodel.LoadingViewModel
+import com.example.cocktaildictionary.viewmodel.HomeActivityViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var cocktailAdapter: CocktailAdapter
-    private lateinit var viewModel:LoadingViewModel
+    private lateinit var viewModel:HomeActivityViewModel
     private var menuItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = ViewModelProvider(this)[LoadingViewModel::class.java]
+        viewModel = ViewModelProvider(this)[HomeActivityViewModel::class.java]
 
         lifecycleScope.launchWhenResumed{
             viewModel.viewState.collect{ viewState ->
@@ -34,28 +34,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun processViewState(viewState: HomeActivityViewState){
+    private fun processViewState(viewState: HomeActivityStates){
 
         when (viewState) {
-            HomeActivityStates.Loading().response() -> {
+            HomeActivityStates.Loading -> {
                 retryUITransition()
                 loadingData()
                 viewModel.getPopularCocktails()
                 return
             }
-            HomeActivityStates.DataLoadFail().response(viewState.error) -> {
+            HomeActivityStates.DataLoadFail(error = viewModel.error?: Throwable()) -> {
                 dataNotReceivedUITransition()
-                binding.Id.text = "Failure: "+ viewState.error?.message.toString()
+                binding.Id.text = "Failure: "+ viewModel.error?.message.toString()
                 binding.retry.setOnClickListener{
                     retryUITransition()
                     loadingData()
                     viewModel.getPopularCocktails()
                 }
+                return
             }
-            HomeActivityStates.DataLoadSuccessful().response(viewState.data) -> {
+            HomeActivityStates.DataLoadSuccessful(cocktailList = viewModel.cocktailList?: CocktailList(Cocktails = emptyList())) -> {
                 dataReceivedUITransition()
                 binding.cocktailRecyclerview.setHasFixedSize(true)
-                cocktailAdapter = CocktailAdapter(viewState.data!!.Cocktails,this)
+                cocktailAdapter = CocktailAdapter((viewModel.cocktailList?:CocktailList(emptyList())).Cocktails,this)
                 binding.cocktailRecyclerview.adapter = cocktailAdapter
                 binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
                 return
