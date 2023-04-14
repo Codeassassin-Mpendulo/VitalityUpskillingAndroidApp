@@ -12,10 +12,10 @@ class HomeActivityReducer : Reducer<HomeActivityAction,HomeActivityStates>{
                 HomeActivityStates.Loading
             }
             is HomeActivityAction.LoadingSuccess ->{
-                HomeActivityStates.DataLoadSuccessful(action.newData)
+                HomeActivityStates.DataLoadSuccessful(action.newData?: CocktailList(Cocktails = emptyList()))
             }
             is HomeActivityAction.LoadingFailure ->{
-                HomeActivityStates.DataLoadFail(action.error)
+                HomeActivityStates.DataLoadFail(action.error?:Throwable("Background Error"))
             }
         }
     }
