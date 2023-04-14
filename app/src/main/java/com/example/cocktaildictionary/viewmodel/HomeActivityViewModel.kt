@@ -59,7 +59,7 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
       store.dispatch(action)
    }
 
-   private fun failedLoad(error:Throwable?){
+   private fun failedLoad(error:Throwable){
       val action = HomeActivityAction.LoadingFailure(error)
       store.dispatch(action)
    }
