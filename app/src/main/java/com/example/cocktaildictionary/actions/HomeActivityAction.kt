@@ -8,6 +8,6 @@ import com.example.cocktaildictionary.network.CocktailList
 
 sealed class HomeActivityAction: Action {
     object LoadingStarted : HomeActivityAction()
-    data class LoadingSuccess(val newData: CocktailList?) : HomeActivityAction()
-    data class LoadingFailure(val error: Throwable?) : HomeActivityAction()
+    data class LoadingSuccess(val newData: CocktailList) : HomeActivityAction()
+    data class LoadingFailure(val error: Throwable) : HomeActivityAction()
 }

@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
             }
             is HomeActivityStates.DataLoadFail -> {
                 dataNotReceivedUITransition()
-                binding.Id.text = "Failure: "+ viewState.error?.message.toString()
+                binding.Id.text = "Failure: "+ viewState.error.message.toString()
                 binding.retry.setOnClickListener{
                     hideRetryUI()
                     showLoadingUI()
