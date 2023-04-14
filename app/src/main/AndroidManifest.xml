@@ -16,7 +16,7 @@
         android:theme="@style/Theme.CocktailDictionary"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.cocktaildictionary.views.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

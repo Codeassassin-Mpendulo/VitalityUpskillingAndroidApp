@@ -2,7 +2,6 @@ package com.example.cocktaildictionary.utils
 
 import android.content.Context
 import android.view.LayoutInflater
-
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +9,6 @@ import com.example.cocktaildictionary.R
 import com.example.cocktaildictionary.databinding.CocktailItemBinding
 import com.example.cocktaildictionary.network.Cocktail
 import com.squareup.picasso.Picasso
-
 
 class CocktailAdapter(private val cocktailList: List<Cocktail>,private val context:Context): RecyclerView.Adapter<CocktailAdapter.ViewHolderClass>() {
     inner class ViewHolderClass(val itemBinding: CocktailItemBinding): RecyclerView.ViewHolder(itemBinding.root) {
