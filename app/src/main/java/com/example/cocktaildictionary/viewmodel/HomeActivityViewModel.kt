@@ -16,6 +16,7 @@ import com.example.cocktaildictionary.state.HomeActivityStates
 import com.example.cocktaildictionary.store.Store
 import com.example.cocktaildictionary.utils.Converters
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
@@ -29,8 +30,6 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
    private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
    private var cacheDatabase: CacheDatabase
    private val converter:Converters = Converters()
-   var error: Throwable? = null
-   var cocktailList: CocktailList? = null
 
    private val store = Store(
       initialState = HomeActivityStates.Loading,
@@ -40,13 +39,6 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
 
    init {
       cacheDatabase = CacheDatabase.getDatabase(application)
-   }
-
-   fun isCocktailListNull():Boolean{
-      if (this.cocktailList != null){
-         return false
-      }
-      return true
    }
 
    private fun insertIntoCache(time: String, cocktailList: CocktailList) {
@@ -64,33 +56,15 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
 
    private fun successfulLoad(cocktailList: CocktailList){
       val action = HomeActivityAction.LoadingSuccess(cocktailList)
-      this.cocktailList = cocktailList
       store.dispatch(action)
    }
 
    private fun failedLoad(error:Throwable?){
       val action = HomeActivityAction.LoadingFailure(error)
-      this.error = error
-      store.dispatch(action)
-   }
-
-   fun loadFilteredData(query: String?){
-      var tempCocktailList = mutableListOf<Cocktail>()
-      val action : HomeActivityAction = if (query != null) {
-         for (cocktail in cocktailList!!.Cocktails) {
-              if (cocktail.drinkName.contains(query) || cocktail.drinkInstruction.contains(query)){
-                 tempCocktailList.add(cocktail)
-              }
-         }
-         HomeActivityAction.LoadFilteredList(CocktailList(tempCocktailList))
-      } else{
-         HomeActivityAction.LoadFilteredList(cocktailList)
-      }
       store.dispatch(action)
    }
 
    fun getPopularCocktails() {
-      startLoading()
       GlobalScope.launch(Dispatchers.IO) {
          if (cacheDatabase.cacheDao().mostRecentData().isNotEmpty()){
             //if Cache entity is not null, get the List of cocktails from an instance of the Cache Entity
@@ -105,18 +79,16 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
          }
          else{
             val service = RetrofitClientInstance.retrofitInstance?.create(CocktailApiServices::class.java)
-            myCompositeDisposable.add(service!!.getCocktails()
+            myCompositeDisposable.add((service?.getCocktails()?: Observable.just(CocktailList(emptyList())))
                .observeOn(AndroidSchedulers.mainThread())
                .subscribeOn(Schedulers.io())
                .subscribe(
                   { res ->
                      successfulLoad(res)
                      insertIntoCache(LocalDateTime.now().toString(),res)
-                     return@subscribe
                   },
                   { throwable ->
                      failedLoad(throwable)
-                     return@subscribe
                   }
                )
             )

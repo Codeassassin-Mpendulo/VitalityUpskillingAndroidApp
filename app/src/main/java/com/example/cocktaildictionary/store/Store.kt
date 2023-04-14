@@ -13,17 +13,16 @@ import kotlinx.coroutines.flow.StateFlow
 * outputting the the update state
  */
 
-class Store<S:State,A:Action>(
+class Store<A : Action, S : State>(
     initialState: S,
-    private val reducer: Reducer<S, A>
+    private val reducer: Reducer<A, S>
 ) {
 
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<S> = _state
 
-    fun dispatch(action: A){
-        val currentState = _state.value
-        val newState = reducer.reduce(currentState,action)
+    fun dispatch(action: A) {
+        val newState = reducer.reduce(action)
         _state.value = newState
     }
 }

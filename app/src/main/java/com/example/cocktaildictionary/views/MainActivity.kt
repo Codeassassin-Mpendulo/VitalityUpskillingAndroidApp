@@ -19,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var cocktailAdapter: CocktailAdapter
     private lateinit var viewModel:HomeActivityViewModel
-    private var menuItem: MenuItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,26 +36,26 @@ class MainActivity : AppCompatActivity() {
     private fun processViewState(viewState: HomeActivityStates){
 
         when (viewState) {
-            HomeActivityStates.Loading -> {
-                retryUITransition()
-                loadingData()
+            is HomeActivityStates.Loading -> {
+                hideRetryUI()
+                showLoadingUI()
                 viewModel.getPopularCocktails()
                 return
             }
-            HomeActivityStates.DataLoadFail(error = viewModel.error?: Throwable()) -> {
+            is HomeActivityStates.DataLoadFail -> {
                 dataNotReceivedUITransition()
-                binding.Id.text = "Failure: "+ viewModel.error?.message.toString()
+                binding.Id.text = "Failure: "+ viewState.error?.message.toString()
                 binding.retry.setOnClickListener{
-                    retryUITransition()
-                    loadingData()
+                    hideRetryUI()
+                    showLoadingUI()
                     viewModel.getPopularCocktails()
                 }
                 return
             }
-            HomeActivityStates.DataLoadSuccessful(cocktailList = viewModel.cocktailList?: CocktailList(Cocktails = emptyList())) -> {
+            is HomeActivityStates.DataLoadSuccessful -> {
                 dataReceivedUITransition()
                 binding.cocktailRecyclerview.setHasFixedSize(true)
-                cocktailAdapter = CocktailAdapter((viewModel.cocktailList?:CocktailList(emptyList())).Cocktails,this)
+                cocktailAdapter = CocktailAdapter(viewState.cocktailList.Cocktails,this)
                 binding.cocktailRecyclerview.adapter = cocktailAdapter
                 binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
                 return
@@ -69,9 +68,6 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.INVISIBLE
         binding.cocktailRecyclerview.visibility = View.VISIBLE
-        if(menuItem != null){
-            menuItem?.isVisible = true
-        }
     }
 
     private fun dataNotReceivedUITransition(){
@@ -79,17 +75,14 @@ class MainActivity : AppCompatActivity() {
         binding.getData.visibility = View.INVISIBLE
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.VISIBLE
-        if(menuItem == null){
-            menuItem?.isVisible = false
-        }
     }
 
-    private fun retryUITransition(){
+    private fun hideRetryUI(){
         binding.Id.isVisible = false
         binding.retry.isVisible = false
     }
 
-    private fun loadingData(){
+    private fun showLoadingUI(){
         binding.getData.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }

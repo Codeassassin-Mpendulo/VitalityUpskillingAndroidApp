@@ -5,8 +5,8 @@ import com.example.cocktaildictionary.actions.HomeActivityAction
 import com.example.cocktaildictionary.network.CocktailList
 import com.example.cocktaildictionary.state.HomeActivityStates
 
-class HomeActivityReducer : Reducer<HomeActivityStates,HomeActivityAction>{
-    override fun reduce(currentState: HomeActivityStates, action: HomeActivityAction): HomeActivityStates {
+class HomeActivityReducer : Reducer<HomeActivityAction,HomeActivityStates>{
+    override fun reduce(action: HomeActivityAction): HomeActivityStates {
         return when(action){
             is HomeActivityAction.LoadingStarted -> {
                 HomeActivityStates.Loading
@@ -17,14 +17,6 @@ class HomeActivityReducer : Reducer<HomeActivityStates,HomeActivityAction>{
             is HomeActivityAction.LoadingFailure ->{
                 HomeActivityStates.DataLoadFail(action.error?:Throwable("Background Error"))
             }
-            is HomeActivityAction.LoadFilteredList ->{
-                HomeActivityStates.DataFilteredSuccessful(action.filteredList?: CocktailList(Cocktails = emptyList()))
-            }
-            is HomeActivityAction.RefreshApp ->{
-                HomeActivityStates.RefreshApp
-            }
         }
     }
-
-
 }
