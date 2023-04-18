@@ -11,5 +11,4 @@ sealed class HomeActivityAction: Action {
     data class LoadingSuccess(val newData: CocktailList) : HomeActivityAction()
     data class LoadingFailure(val error: Throwable) : HomeActivityAction()
     data class LoadFilteredList(val filteredList:CocktailList?):HomeActivityAction()
-    object RefreshApp :HomeActivityAction()
 }

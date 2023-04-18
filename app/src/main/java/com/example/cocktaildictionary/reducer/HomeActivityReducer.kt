@@ -20,9 +20,6 @@ class HomeActivityReducer : Reducer<HomeActivityAction,HomeActivityStates>{
             is HomeActivityAction.LoadFilteredList ->{
                 HomeActivityStates.DataLoadSuccessful(action.filteredList?: CocktailList(Cocktails = emptyList()))
             }
-            is HomeActivityAction.RefreshApp ->{
-                HomeActivityStates.RefreshApp
-            }
         }
     }
 }
