@@ -1,6 +1,5 @@
 package com.example.cocktaildictionary.views
 
-
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,31 +13,26 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.cocktaildictionary.R
 import com.example.cocktaildictionary.databinding.ActivityMainBinding
-import com.example.cocktaildictionary.state.LoadingViewState
+import com.example.cocktaildictionary.state.HomeActivityStates
 import com.example.cocktaildictionary.utils.CocktailAdapter
-import com.example.cocktaildictionary.viewmodel.LoadingViewModel
-
+import com.example.cocktaildictionary.viewmodel.HomeActivityViewModel
 
 class MainActivity : AppCompatActivity() {
 
-
-    private lateinit var binding: ActivityMainBinding
-
-    private lateinit var cocktailAdapter: CocktailAdapter
-    private lateinit var viewModel:LoadingViewModel
-    private var menuItem: MenuItem? = null
-    private var globalMenu:Menu? = null
-
-
-
-
+    private lateinit var binding : ActivityMainBinding
+    private lateinit var cocktailAdapter : CocktailAdapter
+    private lateinit var viewModel : HomeActivityViewModel
+    private lateinit var menuItem : MenuItem
+    private lateinit var globalMenu: Menu
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        viewModel = ViewModelProvider(this)[HomeActivityViewModel::class.java]
 
-        viewModel = ViewModelProvider(this)[LoadingViewModel::class.java]
+
+
         lifecycleScope.launchWhenResumed{
             viewModel.viewState.collect{ viewState ->
                 processViewState(viewState)
@@ -47,17 +41,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater : MenuInflater = menuInflater
         inflater.inflate(R.menu.menu,menu)
-        menuItem = menu!!.findItem(R.id.search)
         globalMenu = menu
-        val searchView: SearchView = menuItem?.actionView as (SearchView)
-        searchView.queryHint = "Type here to search"
+        menuItem = menu.findItem(R.id.search)
 
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.refreshApp(binding.swipeRefreshLayout, menu)
-        }
+        val searchView: SearchView = menuItem.actionView as (SearchView)
+        searchView.queryHint = "Type here to search"
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(newText: String?): Boolean {
@@ -69,32 +60,39 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.refreshApp(binding.swipeRefreshLayout,menuItem)
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun processViewState(viewState: LoadingViewState){
-        if (viewState.showHeading && viewState.showProgressCircle&&viewState.data==null){
-            retryUITransition()
-            loadingData()
-            viewModel.getPopularCocktails()
-            return
-        }
-        else if(!viewState.showHeading && !viewState.showProgressCircle && viewState.data==null && viewState.error!=null){
-            dataNotReceivedUITransition()
-            binding.Id.text = "Failure: "+ viewState.error.message.toString()
-            binding.retry.setOnClickListener{
-                retryUITransition()
-                loadingData()
+    private fun processViewState(viewState: HomeActivityStates){
+
+        when (viewState) {
+            is HomeActivityStates.Loading -> {
+                hideRetryUI()
+                showLoadingUI()
                 viewModel.getPopularCocktails()
+                return
             }
-        }
-        else if(!viewState.showHeading && !viewState.showProgressCircle && viewState.data!=null){
-            dataReceivedUITransition()
-            binding.cocktailRecyclerview.setHasFixedSize(true)
-            cocktailAdapter = CocktailAdapter(viewState.data.Cocktails,this)
-            binding.cocktailRecyclerview.adapter = cocktailAdapter
-            binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
-            return
+            is HomeActivityStates.DataLoadFail -> {
+                dataNotReceivedUITransition()
+                binding.Id.text = "Failure: "+ viewState.error.message.toString()
+                binding.retry.setOnClickListener{
+                    hideRetryUI()
+                    showLoadingUI()
+                    viewModel.getPopularCocktails()
+                }
+                return
+            }
+            is HomeActivityStates.DataLoadSuccessful -> {
+                dataReceivedUITransition()
+                binding.cocktailRecyclerview.setHasFixedSize(true)
+                cocktailAdapter = CocktailAdapter(viewState.cocktailList.Cocktails,this)
+                binding.cocktailRecyclerview.adapter = cocktailAdapter
+                binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
+                return
+            }
         }
     }
 
@@ -103,9 +101,7 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.INVISIBLE
         binding.cocktailRecyclerview.visibility = View.VISIBLE
-        if(menuItem != null){
-            menuItem?.isVisible = true
-        }
+//        menuItem.isVisible = true
     }
 
     private fun dataNotReceivedUITransition(){
@@ -113,27 +109,15 @@ class MainActivity : AppCompatActivity() {
         binding.getData.visibility = View.INVISIBLE
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.VISIBLE
-        if(menuItem == null){
-            menuItem?.isVisible = false
-        }
     }
 
-    private fun retryUITransition(){
+    private fun hideRetryUI(){
         binding.Id.isVisible = false
         binding.retry.isVisible = false
-
     }
-    private fun loadingData(){
+
+    private fun showLoadingUI(){
         binding.getData.visibility = View.VISIBLE
         binding.progressBar.visibility = View.VISIBLE
     }
-
-
-
-
-
 }
-
-
-
-

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="progressbar_layout_width">0dp</dimen>
+    <dimen name="progressbar_layout_height">0dp</dimen>
+    <dimen name="progressbar_layout_marginStart">50dp</dimen>
+    <dimen name="progressbar_layout_marginTop">50dp</dimen>
+    <dimen name="progressbar_layout_marginEnd">50dp</dimen>
+    <dimen name="progressbar_layout_marginBottom">50dp</dimen>
+    <dimen name="get_data_textSize">30sp</dimen>
+    <dimen name="get_data_layout_marginTop">20dp</dimen>
+
+    <dimen name="cocktail_item_image_view_layout_height">100dp</dimen>
+    <dimen name="cocktail_item_image_view_layout_width">100dp</dimen>
+    <dimen name="cocktail_item_image_view_layout_margin_start">20dp</dimen>
+    <dimen name="cocktail_item_image_view_layout_margin_top">20dp</dimen>
+    <dimen name="cocktail_item_image_view_layout_margin_bottom">20dp</dimen>
+
+    <dimen name="cocktail_item_text_view_layout_margin_start">20dp</dimen>
+    <dimen name="cocktail_item_text_view_text_size">30sp</dimen>
+</resources>

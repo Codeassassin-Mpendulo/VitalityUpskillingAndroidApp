@@ -1,12 +1,8 @@
 package com.example.cocktaildictionary.network
 
-
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.GET
 import retrofit2.http.Headers
-
-
-
 
 interface CocktailApiServices {
 

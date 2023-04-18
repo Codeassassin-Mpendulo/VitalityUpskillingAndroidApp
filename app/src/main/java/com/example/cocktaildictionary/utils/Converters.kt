@@ -3,10 +3,8 @@ package com.example.cocktaildictionary.utils
 import androidx.room.TypeConverter
 import com.example.cocktaildictionary.network.Cocktail
 import com.google.gson.Gson
-
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
-
 
 class Converters {
     @TypeConverter
