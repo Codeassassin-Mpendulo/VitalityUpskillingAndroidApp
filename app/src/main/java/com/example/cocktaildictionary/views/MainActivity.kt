@@ -30,9 +30,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[HomeActivityViewModel::class.java]
-
-
-
         lifecycleScope.launchWhenResumed{
             viewModel.viewState.collect{ viewState ->
                 processViewState(viewState)
@@ -101,7 +98,6 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.INVISIBLE
         binding.cocktailRecyclerview.visibility = View.VISIBLE
-//        menuItem.isVisible = true
     }
 
     private fun dataNotReceivedUITransition(){
