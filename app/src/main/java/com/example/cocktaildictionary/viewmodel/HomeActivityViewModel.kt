@@ -5,13 +5,11 @@ import android.content.ContentValues.TAG
 import android.os.CountDownTimer
 import android.text.format.DateUtils
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.cocktaildictionary.R
 import com.example.cocktaildictionary.actions.HomeActivityAction
 import com.example.cocktaildictionary.cache.Cache
 import com.example.cocktaildictionary.cache.CacheDatabase
@@ -155,10 +153,5 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
       }
       return
    }
-
-   fun refreshApp(swipeRefreshLayout: SwipeRefreshLayout, menuItem: MenuItem) {
-      this.getPopularCocktails()
-      menuItem.collapseActionView()
-      swipeRefreshLayout.isRefreshing = false
-   }
+   
 }
