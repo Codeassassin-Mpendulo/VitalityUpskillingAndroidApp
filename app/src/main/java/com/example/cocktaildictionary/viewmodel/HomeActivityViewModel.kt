@@ -153,5 +153,9 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
       }
       return
    }
-   
+   fun refreshApp(swipeRefreshLayout: SwipeRefreshLayout, menuItem: MenuItem) {
+      this.getPopularCocktails()
+      menuItem.collapseActionView()
+      swipeRefreshLayout.isRefreshing = false
+   }
 }
