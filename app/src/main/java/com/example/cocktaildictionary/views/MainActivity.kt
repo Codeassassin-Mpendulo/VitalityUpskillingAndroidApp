@@ -1,5 +1,6 @@
 package com.example.cocktaildictionary.views
 
+//import android.R
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cocktailAdapter : CocktailAdapter
     private lateinit var viewModel : HomeActivityViewModel
     private lateinit var menuItem : MenuItem
-    private lateinit var globalMenu: Menu
+    private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,24 +38,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater : MenuInflater = menuInflater
         inflater.inflate(R.menu.menu,menu)
-        globalMenu = menu
         menuItem = menu.findItem(R.id.search)
-
-        val searchView: SearchView = menuItem.actionView as (SearchView)
+        menuItem.isVisible = false
+        searchView = menuItem.actionView as (SearchView)
+        searchView.onActionViewExpanded()
         searchView.queryHint = "Type here to search"
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
-            override fun onQueryTextSubmit(newText: String?): Boolean {
-                viewModel.loadFilteredData(newText)
-                return false
+        val searchMenuItem: MenuItem = menu.findItem(R.id.search)
+        searchMenuItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                return true // KEEP IT TO TRUE OR IT DOESN'T OPEN !!
             }
-            override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.loadFilteredData(newText)
-                return true
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                viewModel.getPopularCocktails()
+                return true // OR FALSE IF YOU DIDN'T WANT IT TO CLOSE!
             }
         })
         binding.swipeRefreshLayout.setOnRefreshListener {
@@ -84,13 +83,43 @@ class MainActivity : AppCompatActivity() {
             }
             is HomeActivityStates.DataLoadSuccessful -> {
                 dataReceivedUITransition()
-                binding.cocktailRecyclerview.setHasFixedSize(true)
                 cocktailAdapter = CocktailAdapter(viewState.cocktailList.Cocktails,this)
-                binding.cocktailRecyclerview.adapter = cocktailAdapter
-                binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
+                recyclerviewConfiguration(cocktailAdapter)
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                    override fun onQueryTextSubmit(newText: String?): Boolean {
+                        viewModel.loadFilteredData(newText,viewState.cocktailList)
+                        return false
+                    }
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        viewModel.loadFilteredData(newText,viewState.cocktailList)
+                        return true
+                    }
+                })
+                return
+            }
+            is HomeActivityStates.DataFilteredSuccessful ->{
+                dataReceivedUITransition()
+                cocktailAdapter = CocktailAdapter(viewState.filteredCocktailList.Cocktails,this)
+                recyclerviewConfiguration(cocktailAdapter)
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                    override fun onQueryTextSubmit(newText: String?): Boolean {
+                        viewModel.loadFilteredData(newText,viewState.originalCocktailList)
+                        return false
+                    }
+                    override fun onQueryTextChange(newText: String?): Boolean {
+                        viewModel.loadFilteredData(newText,viewState.originalCocktailList)
+                        return true
+                    }
+                })
                 return
             }
         }
+    }
+
+    private fun recyclerviewConfiguration(CocktailAdapter: CocktailAdapter) {
+        binding.cocktailRecyclerview.setHasFixedSize(true)
+        binding.cocktailRecyclerview.adapter = CocktailAdapter
+        binding.cocktailRecyclerview.layoutManager = LinearLayoutManager(this)
     }
 
     private fun dataReceivedUITransition(){
@@ -98,6 +127,7 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.INVISIBLE
         binding.cocktailRecyclerview.visibility = View.VISIBLE
+        menuItem.isVisible = true
     }
 
     private fun dataNotReceivedUITransition(){
@@ -105,6 +135,7 @@ class MainActivity : AppCompatActivity() {
         binding.getData.visibility = View.INVISIBLE
         binding.progressBar.visibility = View.INVISIBLE
         binding.retry.visibility = View.VISIBLE
+        menuItem.isVisible = false
     }
 
     private fun hideRetryUI(){

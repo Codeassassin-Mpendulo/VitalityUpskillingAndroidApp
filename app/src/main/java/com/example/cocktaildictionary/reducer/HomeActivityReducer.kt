@@ -7,18 +7,23 @@ import com.example.cocktaildictionary.state.HomeActivityStates
 
 class HomeActivityReducer : Reducer<HomeActivityAction,HomeActivityStates>{
     override fun reduce(action: HomeActivityAction): HomeActivityStates {
-        return when(action){
+        return when (action) {
             is HomeActivityAction.LoadingStarted -> {
                 HomeActivityStates.Loading
             }
-            is HomeActivityAction.LoadingSuccess ->{
-                HomeActivityStates.DataLoadSuccessful(action.newData?: CocktailList(Cocktails = emptyList()))
+            is HomeActivityAction.LoadingSuccess -> {
+                HomeActivityStates.DataLoadSuccessful(
+                    action.newData ?: CocktailList(Cocktails = emptyList())
+                )
             }
-            is HomeActivityAction.LoadingFailure ->{
-                HomeActivityStates.DataLoadFail(action.error?:Throwable("Background Error"))
+            is HomeActivityAction.LoadingFailure -> {
+                HomeActivityStates.DataLoadFail(action.error ?: Throwable("Background Error"))
             }
-            is HomeActivityAction.LoadFilteredList ->{
-                HomeActivityStates.DataLoadSuccessful(action.filteredList?: CocktailList(Cocktails = emptyList()))
+            is HomeActivityAction.LoadFilteredList -> {
+                HomeActivityStates.DataFilteredSuccessful(
+                    action.filteredList ?: CocktailList(Cocktails = emptyList()),
+                    action.originalCocktailList
+                )
             }
         }
     }

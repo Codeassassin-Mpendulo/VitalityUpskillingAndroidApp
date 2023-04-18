@@ -39,10 +39,10 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
       private const val COUNTDOWN_TIME = 60000L
    }
    private var myCompositeDisposable: CompositeDisposable = CompositeDisposable()
+   lateinit var cocktailList: CocktailList
    private val timer : CountDownTimer
    private var cacheDatabase: CacheDatabase
    private val converter:Converters = Converters()
-   private lateinit var cocktailList: CocktailList
    private val store = Store(
       initialState = HomeActivityStates.Loading,
       reducer = HomeActivityReducer()
@@ -104,18 +104,18 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
       store.dispatch(action)
    }
 
-   fun loadFilteredData(query: String?){
+   fun loadFilteredData(query: String?, originalCocktailList: CocktailList){
       GlobalScope.launch(Dispatchers.IO) {
          var tempCocktailList = mutableListOf<Cocktail>()
          val action: HomeActivityAction = if (query != null) {
-            for (cocktail in cocktailList.Cocktails) {
+            for (cocktail in originalCocktailList.Cocktails) {
                if (cocktail.drinkName.lowercase().contains(query.lowercase()) || cocktail.drinkInstruction.lowercase().contains(query.lowercase())) {
                   tempCocktailList.add(cocktail)
                }
             }
-            HomeActivityAction.LoadFilteredList(CocktailList(tempCocktailList))
+            HomeActivityAction.LoadFilteredList(CocktailList(tempCocktailList),CocktailList(originalCocktailList.Cocktails))
          } else {
-            HomeActivityAction.LoadFilteredList(CocktailList(emptyList()))
+            HomeActivityAction.LoadFilteredList(CocktailList(emptyList()),CocktailList(originalCocktailList.Cocktails))
          }
          store.dispatch(action)
       }
@@ -127,11 +127,9 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
             //if Cache entity is not null, get the List of cocktails from an instance of the Cache Entity
             val mostRecentData = converter.fromString(cacheDatabase.cacheDao().mostRecentData()[0].latestData)
 
-            if(mostRecentData != null){
-               //if the List of cocktails is not null, then convert it into a CockTailList and pass it to the successfulLoad method
-               val cocktailList = CocktailList(mostRecentData)
-               successfulLoad(cocktailList)
-            }
+            //if the List of cocktails is not null, then convert it into a CockTailList and pass it to the successfulLoad method
+            val cocktailList = CocktailList(mostRecentData)
+            successfulLoad(cocktailList)
             return@launch
          }
          else {
@@ -153,6 +151,7 @@ class HomeActivityViewModel(application: Application): AndroidViewModel(applicat
       }
       return
    }
+
    fun refreshApp(swipeRefreshLayout: SwipeRefreshLayout, menuItem: MenuItem) {
       this.getPopularCocktails()
       menuItem.collapseActionView()
